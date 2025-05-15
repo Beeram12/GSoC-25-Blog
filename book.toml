@@ -1,0 +1,5 @@
+[book]
+authors = ["Beeram Pranith Reddy"]
+language = "en"
+src = "src"
+title = "CodeQL Static Analyzer for RTEMS"
