@@ -3,7 +3,7 @@ name: Deploy mdBook to GitHub Pages
 on:
   push:
     branches:
-      - main  # or master if you're using that
+      - main  # Change to 'master' if that's your default branch
 
 jobs:
   deploy:
@@ -15,7 +15,8 @@ jobs:
 
       - name: Install mdBook
         run: |
-          curl -sSL https://github.com/rust-lang/mdBook/releases/latest/download/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz | tar -xz
+          curl -LO https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz
+          tar -xzf mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz
           sudo mv mdbook /usr/local/bin/
 
       - name: Build the book
@@ -25,4 +26,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./book
+          publish_dir: ./book 
