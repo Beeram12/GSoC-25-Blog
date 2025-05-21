@@ -156,8 +156,131 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="chapter-1"><a class="header" href="#chapter-1">Chapter 1</a></h1>
-<p>I am good boy</p>
+                        <h1 id="about-me"><a class="header" href="#about-me">About Me</a></h1>
+<p>I am currently a third-year Electrical Engineering student from Sardar Vallabhbhai National
+Institute of Technology with a strong interest in systems programming, automation, and
+DevOps. While my coursework primarily focuses on electronics and electrical systems, I
+have actively explored low-level programming, operating systems, and automation tools,
+which naturally led me to embedded systems.</p>
+<p>My interest in embedded systems comes from working with microcontrollers for a project in
+my college initially and understanding how software interacts with hardware at a deep level.
+I enjoy optimizing performance, ensuring reliability, and automating workflows—critical
+aspects of embedded development</p>
+<p>I discovered RTEMS while exploring open-source projects from GSOC organizations and their
+role in critical systems like aerospace, robotics, and industrial automation is huge. The
+structured development process and community-driven approach of RTEMS motivated me to
+work with the organization.</p>
+<p>What makes me stand out is my ability to adapt and learn quickly. I have strong experience
+in backend development with Go and C++, which helps me write efficient software.
+Additionally, my interest in optimizing workflows allows me to improve development
+processes.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="project-overview"><a class="header" href="#project-overview">Project-Overview</a></h1>
+<h2 id="project-abstract"><a class="header" href="#project-abstract">Project Abstract</a></h2>
+<p>The project aims to integrate <strong>CodeQL</strong> into the <strong>RTEMS</strong> workflow by configuring it for source code analysis, generating reports on security and coding issues,and allowing rule customization. Additionally, it will develop a standalone tool for local static analysis, ensuring repeatability and future integration into RTEMS CI.</p>
+<h2 id="project-description"><a class="header" href="#project-description">Project Description</a></h2>
+<p>RTEMS currently lacks a robust static analysis tool integrated into its development workflow.While tools like Coverity exist, they are not fully customizable or locally executable. CodeQL offers flexibility, customizability, and the ability to run locally, making it a strong candidate for adoption.</p>
+<p>Static analysis tools help identify potential bugs, security vulnerabilities, and coding
+standard violations early in the development process. CodeQL's query-based approach
+allows developers to define custom rules tailored to RTEMS-specific requirements. The
+current RTEMS workflow relies on external platforms like GitLab CI for running CodeQL,
+generating reports, and manually modifying the source code based on findings. This creates
+dependencies on third-party tools, limits local development flexibility, and requires manual
+effort in reviewing and fixing issues.</p>
+<p>Integrating CodeQL locally eliminates dependencies on external CI platforms like GitLab by
+enabling developers to run static analysis directly on their machines before committing
+changes. CodeQL’s query-based approach allows the creation of custom rules tailored to
+RTEMS-specific requirements, such as ignoring irrelevant files, directories, or rules, ensuring
+only meaningful checks are enforced. Automated report generation provides clear,
+structured insights, reducing manual review efforts and improving efficiency. A standalone
+tool will be developed to streamline local CodeQL execution, complemented by an RTEMS
+Source Builder (RSB) recipe to automate installation and configuration. This setup ensures
+repeatability, minimizes noise through customizable filters and includes documentation and
+a tutorial to guide future contributors. The solution is designed modularly to support
+eventual CI integration while prioritizing local developer experience and alignment with
+RTEMS coding standards.</p>
+<h2 id="project-deliverables"><a class="header" href="#project-deliverables">Project Deliverables</a></h2>
+<ul>
+<li>
+<p>June 2 (Coding Begins)</p>
+<ul>
+<li>Finalize RSB recipe for CodeQL installation
+<ol>
+<li>Test the RSB recipe in a fresh environment to ensure it installs CodeQL
+and all dependencies without errors.</li>
+<li>Ensure that the installed CodeQL version matches the expected latest
+version. Automate version fetching if possible.</li>
+<li>Ensure that missing dependencies or incorrect paths do not break the
+installation</li>
+</ol>
+</li>
+<li>Validate local CodeQL execution on RTEMS codebase
+<ol>
+<li>Confirm the successful creation of the CodeQL database for the RTEMS
+codebase</li>
+<li>Run queries on the database to verify the correct execution</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p>July 14-18 (Midterm Evaluation)</p>
+<ul>
+<li>Successfully running CodeQL setup on RTEMS codebase
+<ol>
+<li>Ensure CodeQL executes correctly on the RTEMS codebase, generating
+meaningful analysis reports</li>
+</ol>
+</li>
+<li>RSB recipe, which installs and configures CodeQL setup
+<ol>
+<li>Ensure the recipe installs the latest compatible version of CodeQL and
+its dependencies</li>
+</ol>
+</li>
+<li>Initial Analysis Reports with Noise Filtering
+<ol>
+<li>Generate initial reports, focusing on filtering out unnecessary noise.</li>
+<li>Implement exclusions for generated files and third-party code.</li>
+<li>Provide a mechanism for developers to analyze only selected files.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p>August 25-September 1 (Final Evaluation)</p>
+<ul>
+<li>Fully functional CodeQL integration with RSB recipe
+<ol>
+<li>Noise filtering is fully tuned to ensure only meaningful issues are
+flagged, reducing unnecessary warnings for developers.</li>
+<li>Custom CodeQL queries are developed for RTEMS-specific patterns and
+coding guidelines if necessary.</li>
+<li>The entire setup is finalized and ready for use.</li>
+</ol>
+</li>
+<li>Scripts for automated report generation and comparison
+<ol>
+<li>Implement scripts for generating reports and tracking issues over time</li>
+<li>Enable automated comparison of analysis results to detect new or
+resolved issues efficiently.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p>Post GSoC</p>
+<ul>
+<li>If interested in adding new features, I am ready to implement or guide new members (eg, Running     Codeql periodically and emailing everyone who committed if the number of issues goes up)</li>
+<li>If interested in integrating with CI/CD pipelines, work with it.</li>
+</ul>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="implementation"><a class="header" href="#implementation">Implementation</a></h1>
+<p>This section documents the weekly progress of the CodeQL Static Analyzer for RTEMS project as part of GSoC 2025.</p>
+<h2 id="week-1-community-bonding-may-14--may-21"><a class="header" href="#week-1-community-bonding-may-14--may-21">Week 1: Community Bonding (May 14 – May 21)</a></h2>
+<p>This week marked the beginning of the GSoC implementation phase. I focused on setting up the static analysis framework and laying the foundation for the CodeQL integration with the RTEMS codebase.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="week1"><a class="header" href="#week1">Week1</a></h1>
+<p>dfsd</p>
 
                     </main>
 
