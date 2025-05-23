@@ -42,6 +42,17 @@
         <script src="toc.js"></script>
     </head>
     <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
     <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
@@ -119,7 +130,7 @@
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
                     </div>
@@ -277,10 +288,62 @@ resolved issues efficiently.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="implementation"><a class="header" href="#implementation">Implementation</a></h1>
 <p>This section documents the weekly progress of the CodeQL Static Analyzer for RTEMS project as part of GSoC 2025.</p>
-<h2 id="week-1-community-bonding-may-14--may-21"><a class="header" href="#week-1-community-bonding-may-14--may-21">Week 1: Community Bonding (May 14 – May 21)</a></h2>
-<p>This week marked the beginning of the GSoC implementation phase. I focused on setting up the static analysis framework and laying the foundation for the CodeQL integration with the RTEMS codebase.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="week1"><a class="header" href="#week1">Week1</a></h1>
-<p>dfsd</p>
+<ul>
+<li><a href="Implementation/./week-1.html">Week-1</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="week-1"><a class="header" href="#week-1">Week-1</a></h1>
+<p>This week marked the beginning of the GSoC implementation phase.This was all the analysis and setup I did before my GSoC application where I focused on setting up the static analysis framework and laying the foundation for the CodeQL integration with the RTEMS codebase.</p>
+<h2 id="work-done"><a class="header" href="#work-done">Work-done</a></h2>
+<ol>
+<li>
+<h3 id="installation-of-codeql"><a class="header" href="#installation-of-codeql">Installation of CodeQL</a></h3>
+<ul>
+<li>
+<p>By referring to the documentation from CodeQL, I opted for Option 2 to install the CodeQL CLI.<br />
+Option 2 focuses on downloading the standalone CodeQL CLI binary from the official GitHub releases page. This method provides:</p>
+<ul>
+<li>The CodeQL CLI executable</li>
+<li>Minimal setup without the default GitHub query packs</li>
+<li>Flexibility to manually install and configure specific query packs</li>
+<li>I downloaded the ZIP file <code>(codeql-linux64.zip)</code> from (<a href="https://github.com/github/codeql-cli-binaries/releases">GitHub CodeQL CLI binary Releases</a>), extracted it.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<h3 id="creation-of-database"><a class="header" href="#creation-of-database">Creation of Database</a></h3>
+<ul>
+<li>After installing the CodeQL CLI, the next step was to generate a CodeQL database from the RTEMS source code.</li>
+<li>A CodeQL database is a structured representation of the codebase, enabling static analysis through queries.</li>
+</ul>
+<h4 id="database-creation-command"><a class="header" href="#database-creation-command">Database Creation Command:</a></h4>
+<pre><code class="language-bash">codeql database create rtems-codeql-db --language=c --source-root=.
+</code></pre>
+<ul>
+<li>This command initializes a new CodeQL database named <code>rtems-codeql-db</code>.</li>
+</ul>
+</li>
+<li>
+<h3 id="analyze-the-database"><a class="header" href="#analyze-the-database">Analyze the Database</a></h3>
+<ul>
+<li>Once the CodeQL database was successfully generated, the next step was to analyze it using specific Coding Standard rules.</li>
+</ul>
+<h4 id="running-the-analysis"><a class="header" href="#running-the-analysis">Running the Analysis:</a></h4>
+<ul>
+<li>Use the following command to analyze the database with one or more Coding Standards:</li>
+</ul>
+<pre><code class="language-bash">codeql database analyze rtems-codeql-db --format=sarif-latest --output=codeql-report.sarif
+</code></pre>
+<ul>
+<li>The results are saved in a <a href="https://sarifweb.azurewebsites.net/">SARIF</a> file, which is a standardized format for static analysis results, and can be visualized using compatible tools.</li>
+</ul>
+</li>
+</ol>
+<h2 id="future-improvements-from-discussions"><a class="header" href="#future-improvements-from-discussions">Future Improvements from discussions</a></h2>
+<ol>
+<li>Install <code>option 1</code> method for installing CodeQL CLI and also include C standard packs like MISRA,CERT-C.</li>
+<li>Make plan for RSB reciepe creation.</li>
+</ol>
 
                     </main>
 
