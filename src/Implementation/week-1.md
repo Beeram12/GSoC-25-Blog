@@ -33,5 +33,10 @@ This week marked the beginning of the GSoC implementation phase.This was all the
     ```
     - The results are saved in a [SARIF](https://sarifweb.azurewebsites.net/) file, which is a standardized format for static analysis results, and can be visualized using compatible tools.
 
+## Future Improvements from discussions
+
+1.  Install `option 1` method for installing CodeQL CLI and also include C standard packs like MISRA,CERT-C. 
+2.  Make plan for RSB reciepe creation.  
+
 
 
