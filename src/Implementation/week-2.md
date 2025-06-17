@@ -119,5 +119,8 @@ This script ensures the workspace is cleaned before each build, which helps avoi
         ```
 3. The output generated is in `sarif` format.
 
+## Future Improvements from discussions
 
+1. Come up with recipe for installation of CodeQL into RSB 
+2. Explore running the queries and excluding some queries 
 
