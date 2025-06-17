@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Implementation - CodeQL Static Analyzer for RTEMS</title>
+        <title>Week-2 - CodeQL Static Analyzer for RTEMS</title>
 
 
         <!-- Custom HTML head -->
@@ -166,24 +166,157 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="implementation"><a class="header" href="#implementation">Implementation</a></h1>
-<p>This section documents the weekly progress of the CodeQL Static Analyzer for RTEMS project as part of GSoC 2025.</p>
+                        <h1 id="week-2"><a class="header" href="#week-2">Week-2</a></h1>
+<p>This week, I focused on practical integration and experimentation with CodeQL, including an upgrade from the previous version and well-classified documentation. I started using the CodeQL CLI bundle to generate databases and run queries across multiple languages, i.e., C, C++, and Python. The goal was to explore CodeQL's ability to enforce secure coding standards like MISRA C, Common C, and detect low-level vulnerabilities early in embedded systems development.</p>
+<p>Alongside CodeQL work, I also began exploring the RTEMS Source Builder (RSB) to understand how toolchains are configured and managed for RTEMS targets.</p>
+<h2 id="work-completed-this-week"><a class="header" href="#work-completed-this-week">Work completed this week</a></h2>
+<h3 id="1-installation-of-codeql-cli-bundle"><a class="header" href="#1-installation-of-codeql-cli-bundle">1. Installation of <code>CodeQL CLI</code> bundle</a></h3>
+<ol>
+<li>
+<p>Download the <code>.tar.gz</code> file from the codeql <a href="https://github.com/github/codeql-action/releases">release-page</a>:</p>
 <ul>
-<li><a href="./week-1.html">Week-1</a></li>
-<li><a href="./week-2.html">Week-2</a></li>
+<li>Here I am using CodeQL CLI bundle, which includes both the CodeQL CLI and GitHub's default security queries.I selected <code>codeql-bundle-linux64.tar.gz</code> because I was using linux-ubuntu.</li>
+<li>Also you can install simlarly using the below link:</li>
 </ul>
+<pre><code>wget https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.21.3/codeql-bundle-linux64.tar.gz
+</code></pre>
+<blockquote>
+<p>The version I used here is <code>v2.21.3</code>.</p>
+</blockquote>
+</li>
+<li>
+<p>Extract the <code>tarball</code> downloaded:</p>
+<pre><code>mkdir -p ~/codeql
+tar -xzvf codeql-bundle-linux64.tar.gz -C ~/codeql
+</code></pre>
+</li>
+<li>
+<p>Add <code>codeql</code> to <code>PATH</code>:</p>
+<pre><code>echo 'export PATH="$HOME/codeql/codeql:$PATH"' &gt;&gt; ~/.bashrc
+source ~/.bashrc
+</code></pre>
+</li>
+<li>
+<p>Verify if <code>codeql</code> is intalled:</p>
+<pre><code>codeql --version  # Should show the CLI version .
+</code></pre>
+</li>
+</ol>
+<h3 id="2-installation-of-ccpp-query-packages"><a class="header" href="#2-installation-of-ccpp-query-packages">2. Installation of <code>C/CPP</code> Query-packages</a></h3>
+<ol>
+<li>To install codeql packages that include:
+<ul>
+<li><code>misra-c-coding-standards</code></li>
+<li><code>cert-c-coding-standards</code></li>
+<li><code>misra-cpp-coding-standards</code></li>
+<li><code>cert-cpp-coding-standards</code></li>
+<li><code>autosar-cpp-coding-standards</code></li>
+<li><code>common-c-coding-standards</code></li>
+<li><code>common-cpp-coding-standards</code>
+Run the following command:</li>
+</ul>
+<pre><code>codeql pack download codeql/misra-c-coding-standards
+codeql pack download codeql/cert-c-coding-standards
+codeql pack download codeql/misra-cpp-coding-standards
+codeql pack download codeql/cert-cpp-coding-standards
+codeql pack download codeql/autosar-cpp-coding-standards
+codeql pack download codeql/common-c-coding-standards
+codeql pack download codeql/common-cpp-coding-standards
+</code></pre>
+</li>
+<li>To verify the location of installation:
+<pre><code>~$ ls .codeql/packages/codeql/
+</code></pre>
+<blockquote>
+<p>Versions of each package installed are
+1. autosar-cpp-coding-standards ⇒ 2.45.0
+2. cert-cpp-coding-standards ⇒ 2.45.0
+3. common-cpp-coding-standards ⇒ 2.45.0
+4. misra-cpp-coding-standards ⇒ 2.45.0
+5. cert-c-coding-standards ⇒ 2.45.0</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="3-creating-database-for-rtems"><a class="header" href="#3-creating-database-for-rtems">3. Creating Database for RTEMS</a></h3>
+<ol>
+<li>For creating a database for mulutiple langauges and other flags I reffred to this <a href="https://docs.github.com/en/code-security/codeql-cli/getting-started-with-the-codeql-cli/preparing-your-code-for-codeql-analysis">documentation</a>.To build the database for <code>RTEMS</code> codebase use the command
+<pre><code>codeql database create rtems-db \
+--db-cluster \
+--language python,c-cpp \
+--command "./build.sh" \
+--no-run-unnecessary-builds \
+--source-root .
+</code></pre>
+</li>
+</ol>
+<blockquote>
+<p>The <code>build.sh</code> script is a helper file that automates the <strong>clean</strong> and <strong>build</strong> process for the RTEMS codebase:</p>
+</blockquote>
+<pre><code class="language-bash">#!/bin/bash
+./waf clean &amp;&amp; ./waf build
+</code></pre>
+<p>This script ensures the workspace is cleaned before each build, which helps avoid inconsistencies due to leftover artifacts.</p>
+<ul>
+<li>Here I am creating a database for 3 languages i.e Python,C,CPP.</li>
+<li>Make sure you are under <code>RTEMS</code> codebase while creation.</li>
+</ul>
+<h3 id="4-analyzing-the-database"><a class="header" href="#4-analyzing-the-database">4. Analyzing the Database</a></h3>
+<ol>
+<li>
+<p>For the analysis of database I reffered this <a href="https://docs.github.com/en/code-security/codeql-cli/codeql-cli-manual/database-analyze#options-to-control-ram-usage">documentation</a>.</p>
+</li>
+<li>
+<p>We can use the below command to analyse the codebase</p>
+<ul>
+<li><strong>For MISRA C:</strong>
+<pre><code>codeql database analyze rtems-db/cpp \
+  --format=sarifv2.1.0 \
+  --output=misra-c-results.sarif \
+  codeql/misra-c-coding-standards@2.45.0 \
+  --ram= "can be set as your wish"\
+  --threads= "can be set as your wish"
+</code></pre>
+</li>
+<li><strong>For CERT C:</strong>
+<pre><code>codeql database analyze rtems-db/cpp \
+  --format=sarifv2.1.0 \
+  --output=cert-c-results.sarif \
+  codeql/cert-c-coding-standards@2.45.0\
+  --ram= "can be set as your wish"\
+  --threads= "can be set as your wish"\
+</code></pre>
+</li>
+<li><strong>For MISRA C++:</strong>
+<pre><code>codeql database analyze rtems-db/cpp \
+  --format=sarifv2.1.0 \
+  --output=misra-cpp-results.sarif \
+  codeql/misra-cpp-coding-standards@2.45.0\
+  --ram= "can be set as your wish"\
+  --threads= "can be set as your wish"\
+</code></pre>
+</li>
+<li><strong>Generate Report for Python</strong>
+<pre><code>codeql database analyze rtems-db/python \
+  --format=sarifv2.1.0 \
+  --output=python-security-results.sarif \
+  codeql/python-queries  # Default security queries
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>The output generated is in <code>sarif</code> format.</p>
+</li>
+</ol>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../project-overview.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../Implementation/week-1.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../Implementation/week-1.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -191,13 +324,10 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../project-overview.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../Implementation/week-1.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../Implementation/week-1.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
             </nav>
 
         </div>
