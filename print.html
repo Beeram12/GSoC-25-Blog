@@ -291,6 +291,7 @@ resolved issues efficiently.</li>
 <ul>
 <li><a href="Implementation/./week-1.html">Week-1</a></li>
 <li><a href="Implementation/./week-2.html">Week-2</a></li>
+<li><a href="Implementation/./week-3.html">Week-3</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="week-1"><a class="header" href="#week-1">Week-1</a></h1>
 <p>This week marked the beginning of the GSoC implementation phase.This was all the analysis and setup I did before my GSoC application where I focused on setting up the static analysis framework and laying the foundation for the CodeQL integration with the RTEMS codebase.</p>
@@ -491,6 +492,53 @@ codeql pack download codeql/common-cpp-coding-standards
 <ol>
 <li>Come up with recipe for installation of CodeQL into RSB</li>
 <li>Explore running the queries and excluding some queries</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="week-3"><a class="header" href="#week-3">Week-3</a></h1>
+<p>During the third week, I collaborated closely with Dr. RTEMS to reproduce the CodeQL setup and workflow on his system using the documentation I had prepared. This joint debugging effort helped us pinpoint specific issues in the CodeQL analysis process. While attempting to integrate CodeQL with the RTEMS Source Builder (RSB), we faced configuration and compatibility challenges, leading to a revised understanding of the mid-term deliverables based on feasibility and project priorities. Additionally, Dr. RTEMS encountered issues visualizing SARIF report outputs due to toolchain limitations, so we decided to shift to the CSV format for CodeQL query results to ensure better compatibility and easier processing going forward.</p>
+<h2 id="work-completed-this-week-1"><a class="header" href="#work-completed-this-week-1">Work completed this week</a></h2>
+<h3 id="1-exclude-queries"><a class="header" href="#1-exclude-queries">1. Exclude Queries</a></h3>
+<ol>
+<li>
+<p>To exclude a query create a directory <code>codeql</code> and add the following details as <code>restricted-cert.qls</code> file.</p>
+<pre><code>- qlpack: codeql/cert-cpp-coding-standards
+    version: 2.46.0
+- exclude:
+    id:
+      - cpp/cert/interleaved-input-output-without-position
+</code></pre>
+<blockquote>
+<p>Mention id in the given format <code>langauge/query-rule/query-name-in-small</code></p>
+</blockquote>
+<p>and run the file i.e use</p>
+<pre><code>codeql database analyze rtems-db/cpp \
+    --format=sarifv2.1.0 \
+    --output=misra-cpp-results.sarif \
+    --ram=8000 \
+    --threads=4 \
+    codeql/cpp-misra-restricted.qls  # Use your custom suite here 
+</code></pre>
+<p>then you will be able to get the report.</p>
+</li>
+<li>
+<p>Generate output using CSV format.</p>
+<pre><code>codeql database analyze rtems-db/cpp \
+    --format=csv \
+    --output=restricted-cpp-results.csv \
+    --ram=8000 \
+    --threads=4 \
+    codeql/cpp-misra-restricted.qls  # Use your custom suite here
+</code></pre>
+</li>
+<li>
+<p>Discussed on grouping all the queries in batches which can be used in CI later.</p>
+</li>
+</ol>
+<h2 id="future-improvements"><a class="header" href="#future-improvements">Future Improvements</a></h2>
+<ol>
+<li>Since our attempt to use the RTEMS Source Builder (RSB) for CodeQL integration did not go as planned, I had a detailed discussion with my mentor Dr. RTEMS regarding alternative approaches.</li>
+<li>We concluded that a more practical and reproducible solution would be to write dedicated scripts for each step of the CodeQL workflow — including database creation, analysis, and result handling.</li>
+<li>These scripts will serve as a reusable automation toolkit that others in the RTEMS community can easily run and replicate.</li>
+<li>This scripting-based setup will form the basis of my midterm deliverable, effectively becoming an alpha integration package for CodeQL with RTEMS.</li>
 </ol>
 
                     </main>

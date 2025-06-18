@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Week-2 - CodeQL Static Analyzer for RTEMS</title>
+        <title>Week-3 - CodeQL Static Analyzer for RTEMS</title>
 
 
         <!-- Custom HTML head -->
@@ -166,165 +166,62 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="week-2"><a class="header" href="#week-2">Week-2</a></h1>
-<p>This week, I focused on practical integration and experimentation with CodeQL, including an upgrade from the previous version and well-classified documentation. I started using the CodeQL CLI bundle to generate databases and run queries across multiple languages, i.e., C, C++, and Python. The goal was to explore CodeQL's ability to enforce secure coding standards like MISRA C, Common C, and detect low-level vulnerabilities early in embedded systems development.</p>
-<p>Alongside CodeQL work, I also began exploring the RTEMS Source Builder (RSB) to understand how toolchains are configured and managed for RTEMS targets.</p>
+                        <h1 id="week-3"><a class="header" href="#week-3">Week-3</a></h1>
+<p>During the third week, I collaborated closely with Dr. RTEMS to reproduce the CodeQL setup and workflow on his system using the documentation I had prepared. This joint debugging effort helped us pinpoint specific issues in the CodeQL analysis process. While attempting to integrate CodeQL with the RTEMS Source Builder (RSB), we faced configuration and compatibility challenges, leading to a revised understanding of the mid-term deliverables based on feasibility and project priorities. Additionally, Dr. RTEMS encountered issues visualizing SARIF report outputs due to toolchain limitations, so we decided to shift to the CSV format for CodeQL query results to ensure better compatibility and easier processing going forward.</p>
 <h2 id="work-completed-this-week"><a class="header" href="#work-completed-this-week">Work completed this week</a></h2>
-<h3 id="1-installation-of-codeql-cli-bundle"><a class="header" href="#1-installation-of-codeql-cli-bundle">1. Installation of <code>CodeQL CLI</code> bundle</a></h3>
+<h3 id="1-exclude-queries"><a class="header" href="#1-exclude-queries">1. Exclude Queries</a></h3>
 <ol>
 <li>
-<p>Download the <code>.tar.gz</code> file from the codeql <a href="https://github.com/github/codeql-action/releases">release-page</a>:</p>
-<ul>
-<li>Here I am using CodeQL CLI bundle, which includes both the CodeQL CLI and GitHub's default security queries.I selected <code>codeql-bundle-linux64.tar.gz</code> because I was using linux-ubuntu.</li>
-<li>Also you can install simlarly using the below link:</li>
-</ul>
-<pre><code>wget https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.21.3/codeql-bundle-linux64.tar.gz
+<p>To exclude a query create a directory <code>codeql</code> and add the following details as <code>restricted-cert.qls</code> file.</p>
+<pre><code>- qlpack: codeql/cert-cpp-coding-standards
+    version: 2.46.0
+- exclude:
+    id:
+      - cpp/cert/interleaved-input-output-without-position
 </code></pre>
 <blockquote>
-<p>The version I used here is <code>v2.21.3</code>.</p>
+<p>Mention id in the given format <code>langauge/query-rule/query-name-in-small</code></p>
 </blockquote>
-</li>
-<li>
-<p>Extract the <code>tarball</code> downloaded:</p>
-<pre><code>mkdir -p ~/codeql
-tar -xzvf codeql-bundle-linux64.tar.gz -C ~/codeql
-</code></pre>
-</li>
-<li>
-<p>Add <code>codeql</code> to <code>PATH</code>:</p>
-<pre><code>echo 'export PATH="$HOME/codeql/codeql:$PATH"' &gt;&gt; ~/.bashrc
-source ~/.bashrc
-</code></pre>
-</li>
-<li>
-<p>Verify if <code>codeql</code> is intalled:</p>
-<pre><code>codeql --version  # Should show the CLI version .
-</code></pre>
-</li>
-</ol>
-<h3 id="2-installation-of-ccpp-query-packages"><a class="header" href="#2-installation-of-ccpp-query-packages">2. Installation of <code>C/CPP</code> Query-packages</a></h3>
-<ol>
-<li>To install codeql packages that include:
-<ul>
-<li><code>misra-c-coding-standards</code></li>
-<li><code>cert-c-coding-standards</code></li>
-<li><code>misra-cpp-coding-standards</code></li>
-<li><code>cert-cpp-coding-standards</code></li>
-<li><code>autosar-cpp-coding-standards</code></li>
-<li><code>common-c-coding-standards</code></li>
-<li><code>common-cpp-coding-standards</code>
-Run the following command:</li>
-</ul>
-<pre><code>codeql pack download codeql/misra-c-coding-standards
-codeql pack download codeql/cert-c-coding-standards
-codeql pack download codeql/misra-cpp-coding-standards
-codeql pack download codeql/cert-cpp-coding-standards
-codeql pack download codeql/autosar-cpp-coding-standards
-codeql pack download codeql/common-c-coding-standards
-codeql pack download codeql/common-cpp-coding-standards
-</code></pre>
-</li>
-<li>To verify the location of installation:
-<pre><code>~$ ls .codeql/packages/codeql/
-</code></pre>
-<blockquote>
-<p>Versions of each package installed are
-1. autosar-cpp-coding-standards ⇒ 2.45.0
-2. cert-cpp-coding-standards ⇒ 2.45.0
-3. common-cpp-coding-standards ⇒ 2.45.0
-4. misra-cpp-coding-standards ⇒ 2.45.0
-5. cert-c-coding-standards ⇒ 2.45.0</p>
-</blockquote>
-</li>
-</ol>
-<h3 id="3-creating-database-for-rtems"><a class="header" href="#3-creating-database-for-rtems">3. Creating Database for RTEMS</a></h3>
-<ol>
-<li>For creating a database for mulutiple langauges and other flags I reffred to this <a href="https://docs.github.com/en/code-security/codeql-cli/getting-started-with-the-codeql-cli/preparing-your-code-for-codeql-analysis">documentation</a>.To build the database for <code>RTEMS</code> codebase use the command
-<pre><code>codeql database create rtems-db \
---db-cluster \
---language python,c-cpp \
---command "./build.sh" \
---no-run-unnecessary-builds \
---source-root .
-</code></pre>
-</li>
-</ol>
-<blockquote>
-<p>The <code>build.sh</code> script is a helper file that automates the <strong>clean</strong> and <strong>build</strong> process for the RTEMS codebase:</p>
-</blockquote>
-<pre><code class="language-bash">#!/bin/bash
-./waf clean &amp;&amp; ./waf build
-</code></pre>
-<p>This script ensures the workspace is cleaned before each build, which helps avoid inconsistencies due to leftover artifacts.</p>
-<ul>
-<li>Here I am creating a database for 3 languages i.e Python,C,CPP.</li>
-<li>Make sure you are under <code>RTEMS</code> codebase while creation.</li>
-</ul>
-<h3 id="4-analyzing-the-database"><a class="header" href="#4-analyzing-the-database">4. Analyzing the Database</a></h3>
-<ol>
-<li>
-<p>For the analysis of database I reffered this <a href="https://docs.github.com/en/code-security/codeql-cli/codeql-cli-manual/database-analyze#options-to-control-ram-usage">documentation</a>.</p>
-</li>
-<li>
-<p>We can use the below command to analyse the codebase</p>
-<ul>
-<li><strong>For MISRA C:</strong>
+<p>and run the file i.e use</p>
 <pre><code>codeql database analyze rtems-db/cpp \
-  --format=sarifv2.1.0 \
-  --output=misra-c-results.sarif \
-  codeql/misra-c-coding-standards@2.45.0 \
-  --ram= "can be set as your wish"\
-  --threads= "can be set as your wish"
+    --format=sarifv2.1.0 \
+    --output=misra-cpp-results.sarif \
+    --ram=8000 \
+    --threads=4 \
+    codeql/cpp-misra-restricted.qls  # Use your custom suite here 
 </code></pre>
-</li>
-<li><strong>For CERT C:</strong>
-<pre><code>codeql database analyze rtems-db/cpp \
-  --format=sarifv2.1.0 \
-  --output=cert-c-results.sarif \
-  codeql/cert-c-coding-standards@2.45.0\
-  --ram= "can be set as your wish"\
-  --threads= "can be set as your wish"\
-</code></pre>
-</li>
-<li><strong>For MISRA C++:</strong>
-<pre><code>codeql database analyze rtems-db/cpp \
-  --format=sarifv2.1.0 \
-  --output=misra-cpp-results.sarif \
-  codeql/misra-cpp-coding-standards@2.45.0\
-  --ram= "can be set as your wish"\
-  --threads= "can be set as your wish"\
-</code></pre>
-</li>
-<li><strong>Generate Report for Python</strong>
-<pre><code>codeql database analyze rtems-db/python \
-  --format=sarifv2.1.0 \
-  --output=python-security-results.sarif \
-  codeql/python-queries  # Default security queries
-</code></pre>
-</li>
-</ul>
+<p>then you will be able to get the report.</p>
 </li>
 <li>
-<p>The output generated is in <code>sarif</code> format.</p>
+<p>Generate output using CSV format.</p>
+<pre><code>codeql database analyze rtems-db/cpp \
+    --format=csv \
+    --output=restricted-cpp-results.csv \
+    --ram=8000 \
+    --threads=4 \
+    codeql/cpp-misra-restricted.qls  # Use your custom suite here
+</code></pre>
+</li>
+<li>
+<p>Discussed on grouping all the queries in batches which can be used in CI later.</p>
 </li>
 </ol>
-<h2 id="future-improvements-from-discussions"><a class="header" href="#future-improvements-from-discussions">Future Improvements from discussions</a></h2>
+<h2 id="future-improvements"><a class="header" href="#future-improvements">Future Improvements</a></h2>
 <ol>
-<li>Come up with recipe for installation of CodeQL into RSB</li>
-<li>Explore running the queries and excluding some queries</li>
+<li>Since our attempt to use the RTEMS Source Builder (RSB) for CodeQL integration did not go as planned, I had a detailed discussion with my mentor Dr. RTEMS regarding alternative approaches.</li>
+<li>We concluded that a more practical and reproducible solution would be to write dedicated scripts for each step of the CodeQL workflow — including database creation, analysis, and result handling.</li>
+<li>These scripts will serve as a reusable automation toolkit that others in the RTEMS community can easily run and replicate.</li>
+<li>This scripting-based setup will form the basis of my midterm deliverable, effectively becoming an alpha integration package for CodeQL with RTEMS.</li>
 </ol>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../Implementation/week-1.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../Implementation/week-2.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../Implementation/week-3.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -332,13 +229,10 @@ codeql pack download codeql/common-cpp-coding-standards
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../Implementation/week-1.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../Implementation/week-2.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../Implementation/week-3.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
             </nav>
 
         </div>
