@@ -209,89 +209,13 @@ repeatability, minimizes noise through customizable filters and includes documen
 a tutorial to guide future contributors. The solution is designed modularly to support
 eventual CI integration while prioritizing local developer experience and alignment with
 RTEMS coding standards.</p>
-<h2 id="project-deliverables"><a class="header" href="#project-deliverables">Project Deliverables</a></h2>
-<ul>
-<li>
-<p>June 2 (Coding Begins)</p>
-<ul>
-<li>Finalize RSB recipe for CodeQL installation
-<ol>
-<li>Test the RSB recipe in a fresh environment to ensure it installs CodeQL
-and all dependencies without errors.</li>
-<li>Ensure that the installed CodeQL version matches the expected latest
-version. Automate version fetching if possible.</li>
-<li>Ensure that missing dependencies or incorrect paths do not break the
-installation</li>
-</ol>
-</li>
-<li>Validate local CodeQL execution on RTEMS codebase
-<ol>
-<li>Confirm the successful creation of the CodeQL database for the RTEMS
-codebase</li>
-<li>Run queries on the database to verify the correct execution</li>
-</ol>
-</li>
-</ul>
-</li>
-<li>
-<p>July 14-18 (Midterm Evaluation)</p>
-<ul>
-<li>Successfully running CodeQL setup on RTEMS codebase
-<ol>
-<li>Ensure CodeQL executes correctly on the RTEMS codebase, generating
-meaningful analysis reports</li>
-</ol>
-</li>
-<li>RSB recipe, which installs and configures CodeQL setup
-<ol>
-<li>Ensure the recipe installs the latest compatible version of CodeQL and
-its dependencies</li>
-</ol>
-</li>
-<li>Initial Analysis Reports with Noise Filtering
-<ol>
-<li>Generate initial reports, focusing on filtering out unnecessary noise.</li>
-<li>Implement exclusions for generated files and third-party code.</li>
-<li>Provide a mechanism for developers to analyze only selected files.</li>
-</ol>
-</li>
-</ul>
-</li>
-<li>
-<p>August 25-September 1 (Final Evaluation)</p>
-<ul>
-<li>Fully functional CodeQL integration with RSB recipe
-<ol>
-<li>Noise filtering is fully tuned to ensure only meaningful issues are
-flagged, reducing unnecessary warnings for developers.</li>
-<li>Custom CodeQL queries are developed for RTEMS-specific patterns and
-coding guidelines if necessary.</li>
-<li>The entire setup is finalized and ready for use.</li>
-</ol>
-</li>
-<li>Scripts for automated report generation and comparison
-<ol>
-<li>Implement scripts for generating reports and tracking issues over time</li>
-<li>Enable automated comparison of analysis results to detect new or
-resolved issues efficiently.</li>
-</ol>
-</li>
-</ul>
-</li>
-<li>
-<p>Post GSoC</p>
-<ul>
-<li>If interested in adding new features, I am ready to implement or guide new members (eg, Running     Codeql periodically and emailing everyone who committed if the number of issues goes up)</li>
-<li>If interested in integrating with CI/CD pipelines, work with it.</li>
-</ul>
-</li>
-</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="implementation"><a class="header" href="#implementation">Implementation</a></h1>
 <p>This section documents the weekly progress of the CodeQL Static Analyzer for RTEMS project as part of GSoC 2025.</p>
 <ul>
 <li><a href="Implementation/./week-1.html">Week-1</a></li>
 <li><a href="Implementation/./week-2.html">Week-2</a></li>
 <li><a href="Implementation/./week-3.html">Week-3</a></li>
+<li><a href="Implementation/./week-4.html">Week-4</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="week-1"><a class="header" href="#week-1">Week-1</a></h1>
 <p>This week marked the beginning of the GSoC implementation phase.This was all the analysis and setup I did before my GSoC application where I focused on setting up the static analysis framework and laying the foundation for the CodeQL integration with the RTEMS codebase.</p>
@@ -540,6 +464,53 @@ codeql pack download codeql/common-cpp-coding-standards
 <li>These scripts will serve as a reusable automation toolkit that others in the RTEMS community can easily run and replicate.</li>
 <li>This scripting-based setup will form the basis of my midterm deliverable, effectively becoming an alpha integration package for CodeQL with RTEMS.</li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="week-4"><a class="header" href="#week-4">Week-4</a></h1>
+<p>During Week-4, we finalized my midterm deliverables after discussions with my mentor, focusing on building a reproducible CodeQL workflow tailored for RTEMS. The primary goal is to automate the entire setup process so that others can easily replicate the analysis steps without manual intervention. To achieve this, I started writing a series of scripts that handle tasks such as downloading, unzipping, and setting up the CodeQL CLI. We also discussed implementing directory exclusion rules to ensure irrelevant files are filtered out during database creation. As of now, the installation and unzipping stages of the automation have been completed successfully, marking steady progress toward the midterm milestone.</p>
+<h2 id="work-completed-this-week-2"><a class="header" href="#work-completed-this-week-2">Work completed this week</a></h2>
+<h3 id="1-finalaze-mid-term-delvirable"><a class="header" href="#1-finalaze-mid-term-delvirable">1. Finalaze mid-term delvirable</a></h3>
+<ol>
+<li>A standalone GitHub repository containing:
+<ul>
+<li>Set up scripts and config files for running CodeQL on <code>RTEMS</code>.</li>
+<li><code>.qls</code> files for selected rule sets.</li>
+<li><code>.qls</code> files focusing on excluding directories accordingly.</li>
+<li>Sample output reports (CSV / SARIF).</li>
+<li>Clear <code>README</code> instructions to replicate the setup manually.</li>
+</ul>
+</li>
+<li>A working demo showing:
+<ul>
+<li>Cloning the toolkit.</li>
+<li>Running CodeQL and viewing actionable issues with line-level details.</li>
+</ul>
+</li>
+<li>(Optional) Draft design for CI integration in the future.</li>
+<li>Toolkit structure
+<pre><code>rtems-codeql-toolkit/
+├── bin/               # CodeQL binaries (auto-downloaded)
+├── config/            # Pre-configured exclusion profiles
+├── reports/           # Analysis outputs
+├── scripts/           # Automation scripts
+│   ├── setup          # Installation script
+│   ├── sb-check       # Environment validator
+│   └── analyze        # Main analysis driver
+└── README.md          # User guide
+</code></pre>
+No mixing with RTEMS source files</li>
+<li>Directory Exclusion Strategy:The following <a href="https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/customizing-your-advanced-setup-for-code-scanning#uploading-code-scanning-data-to-github">documentation</a> has been reffered for directory exclusion.</li>
+</ol>
+<h3 id="2-scripts"><a class="header" href="#2-scripts">2. Scripts</a></h3>
+<ul>
+<li>This week, I completed the scripts used for installing the CodeQL CLI bundle and unzipping it. A progress bar has also been integrated to give users clear visual feedback during the installation process.</li>
+<li>The script  detects the user's operating system and installs the appropriate bundle accordingly..</li>
+<li>If an older version of the bundle is already present, it gets automatically removed, and the new version is installed by simply updating the version number in the script.</li>
+<li>The installed CodeQL bundle is placed inside the <code>bin</code> directory for consistent and organized access.</li>
+</ul>
+<h2 id="future-improvements-1"><a class="header" href="#future-improvements-1">Future Improvements</a></h2>
+<ul>
+<li>I will write scripts that check whether <code>codeql</code> is already available in the system's <code>PATH</code>. If not, the script will guide the user to install or link it correctly.</li>
+<li>I will also implement scripts to create a CodeQL database and run analysis using predefined or custom query packs, ensuring the process is smooth and fully automated.</li>
+</ul>
 
                     </main>
 
