@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Implementation - CodeQL Static Analyzer for RTEMS</title>
+        <title>Week-5 - CodeQL Static Analyzer for RTEMS</title>
 
 
         <!-- Custom HTML head -->
@@ -166,27 +166,76 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="implementation"><a class="header" href="#implementation">Implementation</a></h1>
-<p>This section documents the weekly progress of the CodeQL Static Analyzer for RTEMS project as part of GSoC 2025.</p>
+                        <h1 id="week-5"><a class="header" href="#week-5">Week-5</a></h1>
+<p>This week, I completed writing all the scripts responsible for creating the CodeQL database and performing the analysis. I also began working on excluding queries that are known to hang or get stuck during execution. I collaborated closely with my mentor to test the functionality of these scripts and we are actively working on improving them. Additionally, my mentor provided some feedback and shared initial results, which I will incorporate to further refine and enhance the scripts.</p>
+<h2 id="work-completed-this-week"><a class="header" href="#work-completed-this-week">Work completed this week</a></h2>
+<h3 id="1-scripts"><a class="header" href="#1-scripts">1. Scripts</a></h3>
+<ol>
+<li>
+<p>Completed the following scripts:</p>
 <ul>
-<li><a href="./week-1.html">Week-1</a></li>
-<li><a href="./week-2.html">Week-2</a></li>
-<li><a href="./week-3.html">Week-3</a></li>
-<li><a href="./week-4.html">Week-4</a></li>
-<li><a href="./week-5.html">Week-5</a></li>
+<li><code>create_db.py</code>: Handles database creation with different langauges.</li>
+<li><code>sb_check.py</code> : Checks if CodeQL is available in the system <code>PATH</code>.</li>
+<li><code>analyze_db.py</code> : Handle CodeQL analysis with CSV report generation.</li>
 </ul>
+</li>
+<li>
+<p>The GitLab repository <a href="https://gitlab.rtems.org/Pranith_1316/rtems-codeql-toolkit">rtems-codeql-toolkit</a> is now well-documented:</p>
+<ul>
+<li>A detailed <code>README.md</code> is available explaining how to install, configure, and use each script.</li>
+<li>Clear instructions and examples are provided to help users understand how the toolkit works and how to get started quickly.</li>
+</ul>
+</li>
+</ol>
+<h2 id="future-improvements"><a class="header" href="#future-improvements">Future Improvements</a></h2>
+<p>Based on the feedback received from Dr. RTEMS, I need to do the following improvements to the project:</p>
+<ol>
+<li>
+<p><strong>README.md Modifications</strong></p>
+<ul>
+<li>
+<p>Updated the <code>pip install</code> instructions to include the <code>--user</code> flag for better compatibility:</p>
+<pre><code class="language-bash">pip install --user -r requirements.txt
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Script Enhancements</strong></p>
+<ul>
+<li>Added a proper shebang (<code>#!/usr/bin/env python3</code>) at the top of all Python scripts to allow them to be executed directly.</li>
+<li>Ensured that all scripts in the <code>scripts/</code> directory can be run using <code>./scripts/&lt;script_name&gt;.py</code> format by setting appropriate execute permissions.</li>
+</ul>
+</li>
+<li>
+<p><strong>CodeQL Path and Version Check</strong></p>
+<ul>
+<li>Improve the logic to:
+<ul>
+<li>Detect if CodeQL is already available in the system <code>PATH</code>.</li>
+<li>If present, use the existing CodeQL installation.</li>
+<li>Verify if the CodeQL version matches the required one before proceeding.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>CSV Output Formatting</strong></p>
+<ul>
+<li>Enhanced the CSV formatting logic to ensure the output includes a header row.</li>
+<li>This improves clarity and usability of analysis results for further processing or review.</li>
+</ul>
+</li>
+</ol>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../project-overview.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../Implementation/week-4.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../Implementation/week-1.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -194,13 +243,10 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../project-overview.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../Implementation/week-4.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../Implementation/week-1.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
             </nav>
 
         </div>
