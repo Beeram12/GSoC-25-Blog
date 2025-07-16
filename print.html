@@ -37,6 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc.js"></script>
@@ -93,10 +94,13 @@
                 sidebar = sidebar || 'visible';
             } else {
                 sidebar = 'hidden';
+                sidebar_toggle.checked = false;
             }
-            sidebar_toggle.checked = sidebar === 'visible';
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
@@ -147,7 +151,12 @@
 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -573,6 +582,51 @@ No mixing with RTEMS source files</li>
 </ul>
 </li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="week-6"><a class="header" href="#week-6">Week-6</a></h1>
+<p>This week, my CodeQL toolkit was tested by Gedare, who provided valuable feedback on both the tool and the documentation. Based on his review, I made several improvements to the <code>README.md</code> and adjusted some script behaviors to improve usability and clarity. I also defined my initial milestones for the upcoming midterm evaluation.</p>
+<h2 id="work-completed-this-week-4"><a class="header" href="#work-completed-this-week-4">Work completed this week</a></h2>
+<h3 id="1-readme--tool-improvements"><a class="header" href="#1-readme--tool-improvements">1. README &amp; Tool Improvements</a></h3>
+<ul>
+<li>Incorporated feedback from Gedare to improve the overall structure, clarity, and technical accuracy of the documentation.</li>
+<li>Enhanced command execution steps with better examples and platform-specific notes.</li>
+<li>Added missing <code>.py</code> extensions to command examples (<code>./create_db.py</code>, <code>./analyze_db.py</code>).</li>
+<li>Addressed missing file and directory handling issues, such as the pre-creation of the <code>reports/</code> directory before CSV generation.</li>
+<li>Corrected misleading references (e.g., incorrect <code>.qls</code> file paths).</li>
+<li>Ran a spell check and fixed typos throughout the <code>README.md</code>.</li>
+<li>Clarified assumptions around <code>$HOME</code>, <code>config.ini</code>, and build script locations.</li>
+<li>Explained the CodeQL installation better added documentation and noted potential path conflicts.</li>
+</ul>
+<h3 id="2-csv-output-formatting"><a class="header" href="#2-csv-output-formatting">2. CSV output formatting</a></h3>
+<ul>
+<li>Added proper headers to the CSV file for improved readability and analysis. The output now includes the following fields:</li>
+</ul>
+<div class="table-wrapper"><table><thead><tr><th>Property</th><th>Description</th><th>Example</th></tr></thead><tbody>
+<tr><td>Name</td><td>Name of the query that identified the result.</td><td>Inefficient regular expression</td></tr>
+<tr><td>Description</td><td>Description of the query.</td><td>A regular expression that requires exponential time to match certain inputs can be a performance bottleneck, and may be vulnerable to denial-of-service attacks.</td></tr>
+<tr><td>Severity</td><td>Severity of the query.</td><td>error</td></tr>
+<tr><td>Message</td><td>Alert message.</td><td>This part of the regular expression may cause exponential backtracking on strings containing many repetitions of '\'.</td></tr>
+<tr><td>Path</td><td>Path of the file containing the alert.</td><td>/vendor/codemirror/markdown.js</td></tr>
+<tr><td>Start line</td><td>Line of the file where the code that triggered the alert begins.</td><td>617</td></tr>
+<tr><td>Start column</td><td>Column of the start line that marks the start of the alert code. Not included when equal to 1.</td><td>32</td></tr>
+<tr><td>End line</td><td>Line of the file where the code that triggered the alert ends. Not included when the same value as the start line.</td><td>64</td></tr>
+<tr><td>End column</td><td>Where available, the column of the end line that marks the end of the alert code. Otherwise the end line is repeated.</td><td>617</td></tr>
+</tbody></table>
+</div>
+<h3 id="3-midterm-planning"><a class="header" href="#3-midterm-planning">3. Midterm Planning</a></h3>
+<ul>
+<li>Set clear and achievable milestones for the midterm evaluation.</li>
+</ul>
+<h2 id="summary-of-gedares-review-highlights"><a class="header" href="#summary-of-gedares-review-highlights">Summary of Gedare’s Review Highlights</a></h2>
+<ul>
+<li>Add explicit instructions for installing CodeQL.</li>
+<li>Avoid assumptions about file paths being under <code>$HOME</code>; improve relocatability.</li>
+<li>Support Python virtual environments more clearly.</li>
+<li>Improve cross-platform instructions and test beyond Linux.</li>
+<li>Ensure all script calls include <code>.py</code> extension.</li>
+<li>Explain use of <code>config.ini</code> and clarify build script expectations.</li>
+<li>Fix typos and formatting in <code>README.md</code>.</li>
+<li>Address errors related to missing report directory and invalid file paths.</li>
+</ul>
 
                     </main>
 
@@ -614,6 +668,7 @@ No mixing with RTEMS source files</li>
             window.setTimeout(window.print, 100);
         });
         </script>
+
 
     </div>
     </body>
