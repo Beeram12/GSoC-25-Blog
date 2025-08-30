@@ -8,7 +8,7 @@ For this summer, I have focused on developing a set of Python scripts to make Co
 | Contribution                | Status | Merge Request Link |
 | :-------------------------- | :----- | :----------------- |
 | CodeQL CLI wrapper | Not Merged | [MR !66](https://gitlab.rtems.org/rtems/tools/rtems-tools/-/merge_requests/66)            |
-| Usage documentation    | Not Merged | MR !XXX            |
+| Usage documentation    | Not Merged | [MR !191](https://gitlab.rtems.org/rtems/docs/rtems-docs/-/merge_requests/191)            |
 
 #### Foundational Scripting and Reproducibility
 The initial phase of the project involved manually downloading, installing, and testing the CodeQL tool to generate static analysis reports. To ensure this process could be easily and consistently replicated by any developer, I created a suite of Python scripts. These scripts automate the entire setup and execution process, providing a reliable foundation for running CodeQL within the RTEMS ecosystem.
