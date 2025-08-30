@@ -33,6 +33,7 @@ This week, my CodeQL toolkit was tested by Gedare, who provided valuable feedbac
 ### 3. Midterm Planning
 
 * Set clear and achievable milestones for the midterm evaluation.
+    -  **1st Milestone** Try to resolve all the issues and analyse the reports generated which include excluding rules which genrated `false positives`.
 
 
 ## Summary of Gedare’s Review Highlights
